@@ -1,35 +1,151 @@
+/* styles.css */
+:root {
+  --panel-bg: rgba(18, 20, 26, 0.88);
+  --panel-border: rgba(255, 255, 255, 0.08);
+  --text-primary: #e8eaef;
+  --text-muted: #8b93a3;
+  --accent: #3d9dff;
+  --late: #ff5c5c;
+  --ontime: #3ddc84;
+}
+
 html,
 body {
   margin: 0;
   height: 100%;
-  font-family: sans-serif;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background: #0b0c10;
+  color: var(--text-primary);
 }
 
 #map {
   width: 100%;
-  height: 100vh;
+  height: 73vh;
+  background: #0b0c10;
+}
+
+/* ---------- Unified bottom stats panel ---------- */
+#stats {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  height: 27vh;
+  background: var(--panel-bg);
+  border-top: 1px solid var(--panel-border);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+
+#stats > div {
+  padding: 20px 28px;
+}
+
+#stats > div:not(:last-child) {
+  border-right: 1px solid var(--panel-border);
+}
+
+/* ---------- Speed ---------- */
+#speed-display {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+#speed-display .value {
+  font-family: "SF Mono", "Roboto Mono", Consolas, monospace;
+  font-size: 42px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--accent);
+  text-shadow: 0 0 12px rgba(61, 157, 255, 0.35);
+  font-variant-numeric: tabular-nums;
+}
+
+#speed-display .unit {
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+}
+
+/* ---------- Signal ---------- */
+#signal-display {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 200px;
+}
+
+#signal-display .row {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  font-size: 14px;
+}
+
+#signal-display .label {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+#signal-display .aspect-stop {
+  color: var(--late);
+  font-weight: 700;
+}
+
+#signal-display .aspect-clear {
+  color: var(--ontime);
+  font-weight: 700;
+}
+
+/* ---------- Leaflet popup overrides ---------- */
+.leaflet-popup-content-wrapper {
+  background: var(--panel-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+}
+
+.leaflet-popup-content {
+  margin: 12px 16px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.leaflet-popup-tip {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
 }
 
 .popup-title {
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
   margin-bottom: 8px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--panel-border);
+  padding-bottom: 6px;
 }
 
-.vehicle-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 8px;
+.leaflet-popup-content b {
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
-.vehicle-table th,
-.vehicle-table td {
-  border: 1px solid #ccc;
-  padding: 4px 6px;
-  font-size: 13px;
-  text-align: left;
+.delay-late {
+  color: var(--late);
+  font-weight: 700;
 }
 
-.vehicle-table th {
-  background: #f2f2f2;
+.delay-ontime {
+  color: var(--ontime);
+  font-weight: 700;
 }
