@@ -113,6 +113,48 @@
       color: var(--ontime);
       font-weight: 700;
     }
+    #signal-display {
+  position: fixed;
+  bottom: 24px;
+  left: 190px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 18px;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  color: var(--text-primary);
+  pointer-events: none;
+  font-size: 13px;
+  min-width: 150px;
+}
+
+#signal-display .row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+#signal-display .label {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+#signal-display .aspect-stop {
+  color: var(--late);
+  font-weight: 700;
+}
+
+#signal-display .aspect-clear {
+  color: var(--ontime);
+  font-weight: 700;
+}
   </style>
 </head>
 <body>
@@ -120,6 +162,24 @@
 <div id="speed-display">
   <span class="value">--</span>
   <span class="unit">km/h</span>
+</div>
+<div id="signal-display">
+  <div class="row">
+    <span class="label">Signal</span>
+    <span class="aspect">--</span>
+  </div>
+  <div class="row">
+    <span class="label">Distance</span>
+    <span class="distance">--</span>
+  </div>
+  <div class="row">
+    <span class="label">Limit</span>
+    <span class="limit">--</span>
+  </div>
+  <div class="row">
+    <span class="label">Track Max</span>
+    <span class="track-max">--</span>
+  </div>
 </div>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="script.js"></script>

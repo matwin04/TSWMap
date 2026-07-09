@@ -18,8 +18,11 @@ function initMap() {
     //loadGeoJSON();
     loadPlayer();
     loadSpeed();
+    loadSignal();
+    setInterval(loadPlayer, 1000);
+    setInterval(loadSpeed, 1000);
+    setInterval(loadSignal, 1000);
     //setInterval(loadVehicles, 15000);
-    //setInterval(loadPlayer, 15000);
 }
 async function loadSpeed() {
     const url = 'http://localhost:31270/get/CurrentDrivableActor.Function.HUD_GetSpeed';
@@ -32,9 +35,44 @@ async function loadSpeed() {
         const data = await response.json();
         if (data.Result !== "Success" || data.Values?.["Speed (ms)"] === undefined) return;
         currentSpeed = data.Values["Speed (ms)"] * 3.6; // m/s -> km/h
-        document.getElementById("speed-display").textContent = `${currentSpeed.toFixed(1)} km/h`;
+        document.querySelector("#speed-display .value").textContent = currentSpeed.toFixed(0);
     } catch (err) {
         console.error("Failed to load speed:", err);
+    }
+}
+async function loadSignal() {
+    const url = 'http://localhost:31270/get/DriverAid.Data';
+    const options = {
+        method: 'GET',
+        headers: {dtgcommkey: 'r17+yo5amdMvudbeGqE1Wm4h+vAu9s8Dt0JavINp8mg='}
+    };
+    try {
+        const response = await fetch(url, options);
+        const data = await response.json();
+        if (data.Result !== "Success" || !data.Values) return;
+        const {
+            signalAspectClass,
+            distanceToSignal,
+            speedLimit,
+            trackMaxSpeed
+        } = data.Values;
+
+        const aspect = signalAspectClass || "Unknown";
+        const distanceKm = (distanceToSignal / 1000).toFixed(2);
+        const limitKmh = speedLimit?.value ? (speedLimit.value * 3.6).toFixed(0) : "--";
+        const trackMaxKmh = trackMaxSpeed?.value && trackMaxSpeed.value < 1e6
+            ? (trackMaxSpeed.value * 3.6).toFixed(0)
+            : "--";
+
+        const aspectEl = document.querySelector("#signal-display .aspect");
+        aspectEl.textContent = aspect;
+        aspectEl.className = "aspect " + (aspect === "Stop" ? "aspect-stop" : "aspect-clear");
+
+        document.querySelector("#signal-display .distance").textContent = `${distanceKm} km`;
+        document.querySelector("#signal-display .limit").textContent = `${limitKmh} km/h`;
+        document.querySelector("#signal-display .track-max").textContent = `${trackMaxKmh} km/h`;
+    } catch (err) {
+        console.error("Failed to load signal data:", err);
     }
 }
 async function loadPlayer() {
