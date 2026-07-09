@@ -4,6 +4,7 @@ let geojsonLayer; //Loads geojson exported from OverpassTurbo
 const vehicleMarkers = {};
 let playerMarker;
 let currentSpeed = 0;
+const KEY = "r17+yo5amdMvudbeGqE1Wm4h+vAu9s8Dt0JavINp8mg=";
 /**
  * -----------------------------------
  * MAP
@@ -30,7 +31,7 @@ async function loadSpeed() {
     const url = "http://localhost:31270/get/CurrentDrivableActor.Function.HUD_GetSpeed";
     const options = {
         method: "GET",
-        headers: { dtgcommkey: "r17+yo5amdMvudbeGqE1Wm4h+vAu9s8Dt0JavINp8mg=" }
+        headers: { dtgcommkey: KEY }
     };
     try {
         const response = await fetch(url, options);
