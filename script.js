@@ -21,7 +21,6 @@ function initMap() {
 }
 
 async function loadPlayer() {
-    const url = "http://localhost:31270/get/DriverAid.PlayerInfo";
     try {
         const response = await fetch("http://localhost:31270/get/DriverAid.PlayerInfo", {
             headers: { dtgcommkey: "r17+yo5amdMvudbeGqE1Wm4h+vAu9s8Dt0JavINp8mg=" }
@@ -53,6 +52,8 @@ async function loadPlayer() {
                 .addTo(map)
                 .bindPopup(popupHTML);
         }
+
+        map.setView([lat, lon], map.getZoom());
     } catch (err) {
         console.error("Failed to load player position:", err);
     }
