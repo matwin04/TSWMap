@@ -3,6 +3,7 @@ let map;
 let geojsonLayer; //Loads geojson exported from OverpassTurbo
 const vehicleMarkers = {};
 let playerMarker;
+let currentSpeed = 0;
 /**
  * -----------------------------------
  * MAP
@@ -26,11 +27,15 @@ async function loadSpeed() {
         method: 'GET',
         headers: {dtgcommkey: 'r17+yo5amdMvudbeGqE1Wm4h+vAu9s8Dt0JavINp8mg='}
     };
-
     try {
         const response = await fetch(url, options);
         const data = await response.json();
-
+        if (data.Result !== "Success" || data.Values?.["Speed (ms)"] === undefined) return;
+        currentSpeed = data.Values["Speed (ms)"] * 3.6; // m/s -> km/h
+        document.getElementById("speed-display").textContent = `${currentSpeed.toFixed(1)} km/h`;
+    } catch (err) {
+        console.error("Failed to load speed:", err);
+    }
 }
 async function loadPlayer() {
     try {
@@ -39,7 +44,6 @@ async function loadPlayer() {
         });
         const data = await response.json();
         if (data.Result !== "Success" || !data.Values?.geoLocation) return;
-
         const { geoLocation, playerProfileName, cameraMode, currentServiceName } = data.Values;
         const lat = geoLocation.latitude;
         const lon = geoLocation.longitude;
@@ -50,7 +54,6 @@ async function loadPlayer() {
         <b>Service:</b> ${currentServiceName || "Unknown"}<br>
         <b>Camera Mode:</b> ${cameraMode || "Unknown"}
       `;
-
         if (playerMarker) {
             playerMarker.setLatLng([lat, lon]).setPopupContent(popupHTML);
         } else {
@@ -64,7 +67,6 @@ async function loadPlayer() {
                 .addTo(map)
                 .bindPopup(popupHTML);
         }
-
         map.setView([lat, lon], map.getZoom());
     } catch (err) {
         console.error("Failed to load player position:", err);
