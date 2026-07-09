@@ -149,3 +149,28 @@ body {
   color: var(--ontime);
   font-weight: 700;
 }
+#route-display {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 200px;
+}
+
+#route-display .row {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  font-size: 14px;
+}
+
+.grade-up {
+  color: var(--late);
+  font-weight: 700;
+}
+
+.grade-down {
+  color: var(--ontime);
+  font-weight: 700;
+}

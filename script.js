@@ -11,8 +11,10 @@ let currentSpeed = 0;
  */
 function initMap() {
     map = L.map("map").setView([33.98, -118.25], 10);
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap contributors"
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+        attribution: '&copy; OpenStreetMap contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: "abcd",
+        maxZoom: 20
     }).addTo(map);
     //loadVehicles();
     //loadGeoJSON();
@@ -25,10 +27,10 @@ function initMap() {
     //setInterval(loadVehicles, 15000);
 }
 async function loadSpeed() {
-    const url = 'http://localhost:31270/get/CurrentDrivableActor.Function.HUD_GetSpeed';
+    const url = "http://localhost:31270/get/CurrentDrivableActor.Function.HUD_GetSpeed";
     const options = {
-        method: 'GET',
-        headers: {dtgcommkey: 'r17+yo5amdMvudbeGqE1Wm4h+vAu9s8Dt0JavINp8mg='}
+        method: "GET",
+        headers: { dtgcommkey: "r17+yo5amdMvudbeGqE1Wm4h+vAu9s8Dt0JavINp8mg=" }
     };
     try {
         const response = await fetch(url, options);
@@ -54,7 +56,13 @@ async function loadSignal() {
             signalAspectClass,
             distanceToSignal,
             speedLimit,
-            trackMaxSpeed
+            trackMaxSpeed,
+            gradient,
+            bSignalIsPermissive,
+            currentSpeedLimitSource,
+            nextSpeedLimit,
+            distanceToNextSpeedLimit,
+            nextSignals
         } = data.Values;
 
         const aspect = signalAspectClass || "Unknown";
@@ -65,12 +73,40 @@ async function loadSignal() {
             : "--";
 
         const aspectEl = document.querySelector("#signal-display .aspect");
-        aspectEl.textContent = aspect;
+        aspectEl.textContent = aspect + (bSignalIsPermissive ? " (Permissive)" : "");
         aspectEl.className = "aspect " + (aspect === "Stop" ? "aspect-stop" : "aspect-clear");
 
         document.querySelector("#signal-display .distance").textContent = `${distanceKm} km`;
         document.querySelector("#signal-display .limit").textContent = `${limitKmh} km/h`;
         document.querySelector("#signal-display .track-max").textContent = `${trackMaxKmh} km/h`;
+
+        // ---- Gradient ----
+        const gradientPct = ((gradient || 0) * 100).toFixed(1);
+        const gradientEl = document.querySelector("#route-display .gradient");
+        gradientEl.textContent = `${gradientPct > 0 ? "+" : ""}${gradientPct}%`;
+        gradientEl.className = "gradient " + (gradient > 0 ? "grade-up" : gradient < 0 ? "grade-down" : "");
+
+        // ---- Speed limit source ----
+        document.querySelector("#route-display .limit-source").textContent =
+            currentSpeedLimitSource || "Unknown";
+
+        // ---- Next speed limit ----
+        const nextLimitKmh = nextSpeedLimit?.value ? (nextSpeedLimit.value * 3.6).toFixed(0) : "--";
+        const nextLimitDistKm = distanceToNextSpeedLimit ? (distanceToNextSpeedLimit / 1000).toFixed(2) : "--";
+        document.querySelector("#route-display .next-limit").textContent =
+            nextLimitKmh !== "--" && nextLimitKmh !== "0" ? `${nextLimitKmh} km/h in ${nextLimitDistKm} km` : "None";
+
+        // ---- Next signal preview ----
+        const upcoming = nextSignals?.[0];
+        const nextSigEl = document.querySelector("#route-display .next-signal");
+        if (upcoming) {
+            const distKm = (upcoming.distanceToNextSignal / 1000).toFixed(2);
+            nextSigEl.textContent = `${upcoming.value} in ${distKm} km`;
+            nextSigEl.className = "next-signal " + (upcoming.value === "Stop" ? "aspect-stop" : "aspect-clear");
+        } else {
+            nextSigEl.textContent = "None";
+            nextSigEl.className = "next-signal";
+        }
     } catch (err) {
         console.error("Failed to load signal data:", err);
     }
