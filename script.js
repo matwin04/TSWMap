@@ -16,10 +16,22 @@ function initMap() {
     //loadVehicles();
     //loadGeoJSON();
     loadPlayer();
+    loadSpeed();
     //setInterval(loadVehicles, 15000);
     //setInterval(loadPlayer, 15000);
 }
+async function loadSpeed() {
+    const url = 'http://localhost:31270/get/CurrentDrivableActor.Function.HUD_GetSpeed';
+    const options = {
+        method: 'GET',
+        headers: {dtgcommkey: 'r17+yo5amdMvudbeGqE1Wm4h+vAu9s8Dt0JavINp8mg='}
+    };
 
+    try {
+        const response = await fetch(url, options);
+        const data = await response.json();
+
+}
 async function loadPlayer() {
     try {
         const response = await fetch("http://localhost:31270/get/DriverAid.PlayerInfo", {
